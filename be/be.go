@@ -4,12 +4,14 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func main() {
 	r := gin.Default()
+	r.Use(cors.Default())
 
 	connect()
 
@@ -19,7 +21,7 @@ func main() {
 	r.DELETE("/students/:student_id", deleteStudent)
 
 	r.GET("/courses", getCourses)
-	
+
 	r.GET("/extras", getExtras)
 
 	r.Run()
