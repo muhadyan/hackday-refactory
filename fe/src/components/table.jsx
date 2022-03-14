@@ -17,26 +17,33 @@ export default function Table() {
 
   return (
     <div className="container">
-      <table className="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col">Student ID</th>
-            <th scope="col">Full Name</th>
-            <th scope="col">Extra ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          {student.map((value, index) => {
-            return (
-              <tr key={index}>
-                <th scope="row">{value.student_id}</th>
-                <td>{value.full_name}</td>
-                <td>{value.extra_id}</td>
+      <div class="row justify-content-md-center">
+        <h1 class="col col-lg-4">List of Students</h1>
+      </div>
+      <div className="row justify-content-md-center">
+        <div className="col-6">
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Student ID</th>
+                <th scope="col">Full Name</th>
+                <th scope="col">Extra Name</th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {student.map((value, index) => {
+                return (
+                  <tr key={index}>
+                    <th scope="row">{value.student_id}</th>
+                    <td>{value.full_name}</td>
+                    <td>{value.extra_name}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
