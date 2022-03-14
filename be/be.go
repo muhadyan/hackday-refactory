@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -29,6 +29,12 @@ func main() {
 
 type Students struct {
 	StudentID int64  `json:"student_id" gorm:"not null;primaryKey;autoIncrement"`
+	FullName  string `json:"full_name"`
+	ExtraName string `json:"extra_name" gorm:"column:extra_name"`
+}
+// for post
+type students struct {
+	StudentID int64  `json:"student_id"`
 	FullName  string `json:"full_name"`
 	ExtraID   int64  `json:"extra_id"`
 }
@@ -58,26 +64,30 @@ func connect() {
 // Get Data Students
 func getStudents(c *gin.Context) {
 	var students []Students
-	DB.Find(&students)
+	DB.Table(`students`).
+		Select(`students.student_id, students.full_name, extras.extra_name`).
+		Joins("inner join extras on extras.extra_id = students.extra_id").
+		Scan(&students)
 
-	c.JSON(200, students)
+	c.JSON(http.StatusOK, students)
 }
 
 // Post Data Students
 func postStudent(c *gin.Context) {
+	c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
 	// Validate Input
-	var input Students
+	var input students
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(200, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 	// Validate Booking Id & Create Booking
 	var check Students
 	DB.Where("id = ?", input.StudentID).First(&check)
 
-	student := Students{StudentID: input.StudentID, FullName: input.FullName, ExtraID: input.ExtraID}
+	student := students{StudentID: input.StudentID, FullName: input.FullName, ExtraID: input.ExtraID}
 	DB.Create(&student)
-	c.JSON(200, "Success")
+	c.JSON(http.StatusOK, "Success")
 }
 
 // Update Data Students
@@ -121,7 +131,7 @@ func getCourses(c *gin.Context) {
 	var courses []Courses
 	DB.Find(&courses)
 
-	c.JSON(200, courses)
+	c.JSON(http.StatusOK, courses)
 }
 
 //// EXTRAS
@@ -130,5 +140,5 @@ func getExtras(c *gin.Context) {
 	var extras []Extras
 	DB.Find(&extras)
 
-	c.JSON(200, extras)
+	c.JSON(http.StatusOK, extras)
 }
