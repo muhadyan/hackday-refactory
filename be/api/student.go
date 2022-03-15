@@ -3,6 +3,7 @@ package api
 import (
 	"be/db"
 	"be/model"
+	"be/model/request"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -24,19 +25,19 @@ func GetStudents(c echo.Context) error {
 func PostStudent(c echo.Context) error {
 	db := db.DbManager()
 	// Validate Input
-	var input model.Students
+	var input request.Students
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	student := model.Students{
+	student := request.Students{
 		StudentID: input.StudentID,
 		FullName:  input.FullName,
-		ExtraName: input.ExtraName}
+		ExtraID:   input.ExtraID}
 
 	db.Create(&student)
 
-	return c.JSON(http.StatusOK, student)
+	return c.JSON(http.StatusOK, "Success")
 }
 
 // Update Data Students
