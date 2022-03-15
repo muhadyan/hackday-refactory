@@ -1,9 +1,5 @@
 package model
 
-// import (
-// 	"github.com/jinzhu/gorm"
-// )
-
 type Students struct {
 	StudentID int64  `json:"student_id" gorm:"not null;primaryKey;autoIncrement"`
 	FullName  string `json:"full_name"`

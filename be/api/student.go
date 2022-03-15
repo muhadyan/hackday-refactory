@@ -3,7 +3,7 @@ package api
 import (
 	"be/db"
 	"be/model"
-	"be/model/request"
+	"be/request"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -44,20 +44,20 @@ func PostStudent(c echo.Context) error {
 func UpdateStudent(c echo.Context) error {
 	db := db.DbManager()
 	// Get model if exist
-	var student model.Students
+	var student request.Students
 	param := c.Param("student_id")
 
 	if err := db.Where("student_id = ?", param).First(&student).Error; err != nil {
-		c.JSON(http.StatusNotFound, "Record not found!")
+		return c.JSON(http.StatusNotFound, "Record not found!")
 	}
 
 	// validate input
-	var input model.Students
+	var input request.Students
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	db.Model(&student).Updates(input)
+	db.Model(&student).Where("student_id = ?", param).Updates(input)
 
 	return c.JSON(http.StatusOK, student)
 }
@@ -69,10 +69,10 @@ func DeleteStudent(c echo.Context) error {
 	param := c.Param("student_id")
 
 	if err := db.Where("student_id = ?", param).First(&student).Error; err != nil {
-		c.JSON(http.StatusNotFound, "Record not found")
+		return c.JSON(http.StatusNotFound, "Record not found")
 	}
 
-	db.Delete(&student)
+	db.Where("student_id = ?", param).Delete(&student)
 
 	return c.JSON(http.StatusOK, "Data has been deleted")
 }
