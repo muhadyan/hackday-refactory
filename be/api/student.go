@@ -30,12 +30,18 @@ func PostStudent(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
+	if input.FullName == "" || input.ExtraID == 0 {
+		return c.JSON(http.StatusNoContent, "Data not complete or empty")
+	}
+
 	student := request.Students{
 		StudentID: input.StudentID,
 		FullName:  input.FullName,
 		ExtraID:   input.ExtraID}
 
-	db.Create(&student)
+	if err := db.Create(&student).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
 
 	return c.JSON(http.StatusOK, "Success")
 }
